@@ -15,7 +15,7 @@ type PromptNames = "useranswer";
 
 interface Prompt {
   type: string;
-  name: PromptNames;
+  name: PromptNames | string;
   message: string;
 }
 
@@ -65,7 +65,9 @@ async function askQuestion(): Promise<void> {
   const data: Buffer = await fs.readFile(FILE_PATH);
   const parsedData: Data[] = JSON.parse(data.toString());
 
-  const target: Data = parsedData[0];
+  // const target: Data = parsedData[0];
+  const target: Data =
+    parsedData[Math.floor(Math.random() * parsedData.length)];
 
   const { question, answer } = target;
 
@@ -78,7 +80,7 @@ async function askQuestion(): Promise<void> {
   const answers: Answers = await inquirer.prompt([prompt]);
 
   target.lastAnsweredCorrect = checkAnswer(answers.useranswer, answer);
-  target.lastAsked = Date.now().toString();
+  target.lastAsked = new Date().toUTCString();
 
   const newData: Data[] = parsedData.filter((item) => item.id !== target.id);
 
