@@ -1,4 +1,4 @@
-## QuizMe
+# QuizMe
 
 A CLI tool that will help to test knowledge.
 
@@ -19,12 +19,11 @@ quizme --add
 - Ask me for the answer
 - Store for future uses
 
-
 ## What do I need?
 
 - Parse arguments
 - Interactive command line
 - Persist my data - using JSON
-    - Reading/Writing from the file system
+  - Reading/Writing from the file system
 - Global script
 - Self-evaluating or auto-evaluating

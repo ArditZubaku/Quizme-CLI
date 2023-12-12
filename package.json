@@ -1,0 +1,9 @@
+{
+  "name": "QuizMe",
+  "version": "1.0.0",
+  "description": "A CLI tool that will help to test knowledge.",
+  "main": "index.js",
+  "author": "Ardit Zubaku <zubaku92@gmail.com>",
+  "license": "MIT",
+  "type": "module"
+}
