@@ -1,4 +1,5 @@
 import inquirer from "inquirer";
+import fs from "node:fs/promises";
 
 const flags: string[] = [];
 
@@ -38,6 +39,23 @@ async function addQuestion() {
   console.log(`You live in ${answers.live} which is in ${answers.live2}`);
 }
 
-function askQuestion() {
-  throw new Error("Function not implemented.");
+async function askQuestion(): Promise<void> {
+  const data = await fs.readFile("src/data.json");
+  const parsedData = JSON.parse(data.toString());
+
+  const { question, answer } = parsedData[0];
+
+  const answers = await inquirer.prompt([
+    {
+      type: "input",
+      name: "useranswer",
+      message: question,
+    },
+  ]);
+
+  if (answers.useranswer === answer) {
+    console.log("That's right!");
+  } else {
+    console.log("Not this time");
+  }
 }
