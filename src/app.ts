@@ -7,25 +7,25 @@ import { dirname, join } from "node:path";
 import { Data } from "./interfaces/data.interface";
 import { Prompt } from "./interfaces/prompt.interface";
 import { Answer } from "./types/custom.type";
+import { parseArgs } from "node:util";
 
 const FILE_PATH: string = "src/data.json";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataFile = join(__dirname, FILE_PATH);
 
-const flags: string[] = [];
-
-process.argv.forEach((arg: string) => {
-  if (arg.startsWith("--") || arg.startsWith("-")) {
-    flags.push(arg.replaceAll("-", ""));
-  }
+const {
+  values: { add },
+} = parseArgs({
+  options: {
+    add: {
+      type: "boolean",
+      short: "a",
+    },
+  },
 });
 
-if (flags.includes("a") || flags.includes("add")) {
-  addQuestion();
-} else {
-  askQuestion();
-}
+add ? addQuestion : askQuestion();
 
 async function addQuestion(): Promise<void> {
   // - Start a dialogue
