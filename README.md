@@ -2,6 +2,10 @@
 
 A CLI tool that will help to test knowledge.
 
+```bash
+chmod +x ./makexec.sh
+```
+
 ```sh
 quizme
 ```
@@ -14,12 +18,18 @@ quizme
 quizme --add
 ```
 
+or shorthand
+
+```sh
+quizme -a
+```
+
 - Start a dialogue
 - Ask me for a question
 - Ask me for the answer
 - Store for future uses
 
-## What do I need?
+## What does it do?
 
 - Parse arguments
 - Interactive command line
@@ -27,12 +37,3 @@ quizme --add
   - Reading/Writing from the file system
 - Global script
 - Self-evaluating or auto-evaluating
-
-## Data structure
-
-id: Integer
-question: String
-answer: String
-createdAt: String (Date)
-lastAsked: String (Date)
-lastAnsweredCorrect: Boolean
