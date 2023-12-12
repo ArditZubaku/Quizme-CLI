@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import inquirer from "inquirer";
 import fs from "node:fs/promises";
 
@@ -78,7 +80,6 @@ async function askQuestion(): Promise<void> {
   const data: Buffer = await fs.readFile(FILE_PATH);
   const parsedData: Data[] = JSON.parse(data.toString());
 
-  // const target: Data = parsedData[0];
   const target: Data =
     parsedData[Math.floor(Math.random() * parsedData.length)];
 
@@ -91,8 +92,6 @@ async function askQuestion(): Promise<void> {
   };
 
   const answers: Answer = await inquirer.prompt([prompt]);
-
-  console.log("QETU", answers);
 
   target.lastAnsweredCorrect = await checkAnswer(answers.userAnswer, answer);
   target.lastAsked = new Date().toUTCString();
@@ -116,16 +115,6 @@ async function checkAnswer(input: string, answer: string): Promise<boolean> {
   const response: Answer = await inquirer.prompt([prompt]);
 
   return Boolean(response.check);
-  // if (
-  //   input.split(" ").join("").toLowerCase() ===
-  //   answer.split(" ").join("").toLowerCase()
-  // ) {
-  //   console.log("You got it right!");
-  //   return true;
-  // } else {
-  //   console.log("You got it wrong!");
-  //   return false;
-  // }
 }
 
 function getID(data: Data[]) {
