@@ -1,19 +1,4 @@
-import readline from "node:readline/promises";
-
-// Duplex stream
-const rl = readline.createInterface({
-  terminal: true,
-  input: process.stdin,
-  output: process.stdout,
-});
-
-console.log("What is your name?");
-const answer: string = await rl.question("What is your name?");
-console.log(`Your name is ${answer}`);
-const answer2: string = await rl.question("Where do you live?");
-console.log(`Your location is ${answer2}`);
-
-rl.close();
+import inquirer from "inquirer";
 
 const flags: string[] = [];
 
@@ -24,7 +9,35 @@ process.argv.forEach((arg: string) => {
 });
 
 if (flags.includes("a") || flags.includes("add")) {
-  console.log("add some values");
+  addQuestion();
 } else {
-  console.log("do some work");
+  askQuestion();
+}
+
+async function addQuestion() {
+  const answers = await inquirer.prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "What is your name?",
+    },
+    {
+      type: "input",
+      name: "live",
+      message: "Where do you live?",
+    },
+    {
+      type: "list",
+      name: "live2",
+      message: "Where do you live?",
+      choices: ["NI", "Wales", "Scotland", "England", "Elsewhere"],
+    },
+  ]);
+
+  console.log(`Your name is ${answers.name}.`);
+  console.log(`You live in ${answers.live} which is in ${answers.live2}`);
+}
+
+function askQuestion() {
+  throw new Error("Function not implemented.");
 }
