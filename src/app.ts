@@ -2,28 +2,16 @@
 
 import inquirer from "inquirer";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { Data } from "./interfaces/data.interface";
+import { Prompt } from "./interfaces/prompt.interface";
+import { Answer } from "./types/custom.type";
 
-const FILE_PATH = "src/data.json";
+const FILE_PATH: string = "src/data.json";
 
-interface Data {
-  id: number;
-  question: string;
-  answer: string;
-  lastAnsweredCorrect?: boolean;
-  lastAsked?: string;
-}
-
-type PromptNames = "userAnswer" | "targetQuestion" | "targetAnswer" | "check";
-
-interface Prompt {
-  type: "input" | "confirm";
-  name: PromptNames;
-  message: string;
-}
-
-type Answer = {
-  [K in PromptNames]: string;
-};
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const dataFile = join(__dirname, FILE_PATH);
 
 const flags: string[] = [];
 
@@ -62,7 +50,7 @@ async function addQuestion(): Promise<void> {
   console.log(responses);
 
   // - Store for future uses
-  const data: Buffer = await fs.readFile(FILE_PATH);
+  const data: Buffer = await fs.readFile(dataFile);
   const parsedData: Data[] = JSON.parse(data.toString());
 
   parsedData.push({
@@ -72,12 +60,12 @@ async function addQuestion(): Promise<void> {
   });
 
   // TODO: Optimize this
-  await fs.truncate(FILE_PATH);
-  await fs.appendFile(FILE_PATH, JSON.stringify(parsedData));
+  await fs.truncate(dataFile);
+  await fs.appendFile(dataFile, JSON.stringify(parsedData));
 }
 
 async function askQuestion(): Promise<void> {
-  const data: Buffer = await fs.readFile(FILE_PATH);
+  const data: Buffer = await fs.readFile(dataFile);
   const parsedData: Data[] = JSON.parse(data.toString());
 
   const target: Data =
@@ -100,7 +88,7 @@ async function askQuestion(): Promise<void> {
 
   newData.push(target);
 
-  await fs.writeFile(FILE_PATH, JSON.stringify(newData));
+  await fs.writeFile(dataFile, JSON.stringify(newData));
 }
 
 async function checkAnswer(input: string, answer: string): Promise<boolean> {
