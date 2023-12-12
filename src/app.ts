@@ -11,15 +11,15 @@ interface Data {
   lastAsked?: string;
 }
 
-type PromptNames = "userAnswer" | "targetQuestion" | "targetAnswer";
+type PromptNames = "userAnswer" | "targetQuestion" | "targetAnswer" | "check";
 
 interface Prompt {
-  type: "input";
-  name: PromptNames | string;
+  type: "input" | "confirm";
+  name: PromptNames;
   message: string;
 }
 
-type Answers = {
+type Answer = {
   [K in PromptNames]: string;
 };
 
@@ -55,7 +55,7 @@ async function addQuestion(): Promise<void> {
     message: "What is your answer?",
   };
 
-  const responses: Answers = await inquirer.prompt([prompt1, prompt2]);
+  const responses: Answer = await inquirer.prompt([prompt1, prompt2]);
 
   console.log(responses);
 
@@ -86,13 +86,15 @@ async function askQuestion(): Promise<void> {
 
   const prompt: Prompt = {
     type: "input",
-    name: "useranswer",
+    name: "userAnswer",
     message: question,
   };
 
-  const answers: Answers = await inquirer.prompt([prompt]);
+  const answers: Answer = await inquirer.prompt([prompt]);
 
-  target.lastAnsweredCorrect = checkAnswer(answers.userAnswer, answer);
+  console.log("QETU", answers);
+
+  target.lastAnsweredCorrect = await checkAnswer(answers.userAnswer, answer);
   target.lastAsked = new Date().toUTCString();
 
   const newData: Data[] = parsedData.filter((item) => item.id !== target.id);
@@ -102,14 +104,28 @@ async function askQuestion(): Promise<void> {
   await fs.writeFile(FILE_PATH, JSON.stringify(newData));
 }
 
-function checkAnswer(input: string, answer: string): boolean {
-  if (input === answer) {
-    console.log("You got it right!");
-    return true;
-  } else {
-    console.log("You got it wrong!");
-    return false;
-  }
+async function checkAnswer(input: string, answer: string): Promise<boolean> {
+  console.log(`You answered: ${input}`);
+  console.log(`The actual answer is ${answer}`);
+
+  const prompt: Prompt = {
+    message: "Did you get it right?",
+    type: "confirm",
+    name: "check",
+  };
+  const response: Answer = await inquirer.prompt([prompt]);
+
+  return Boolean(response.check);
+  // if (
+  //   input.split(" ").join("").toLowerCase() ===
+  //   answer.split(" ").join("").toLowerCase()
+  // ) {
+  //   console.log("You got it right!");
+  //   return true;
+  // } else {
+  //   console.log("You got it wrong!");
+  //   return false;
+  // }
 }
 
 function getID(data: Data[]) {
