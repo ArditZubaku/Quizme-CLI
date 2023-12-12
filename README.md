@@ -1,6 +1,8 @@
 # QuizMe
 
-A CLI tool that will help to test knowledge.
+## A CLI tool that will help to test knowledge
+
+This script will make the app globally executable in UNIX systems
 
 ```bash
 chmod +x ./makexec.sh
