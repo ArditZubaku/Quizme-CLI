@@ -1,6 +1,28 @@
 import inquirer from "inquirer";
 import fs from "node:fs/promises";
 
+const FILE_PATH = "src/data.json";
+
+interface Data {
+  id: number;
+  question: string;
+  answer: string;
+  lastAnsweredCorrect: boolean;
+  lastAsked: string;
+}
+
+type PromptNames = "useranswer";
+
+interface Prompt {
+  type: string;
+  name: PromptNames;
+  message: string;
+}
+
+type Answers = {
+  [K in PromptNames]: string;
+};
+
 const flags: string[] = [];
 
 process.argv.forEach((arg: string) => {
@@ -40,22 +62,37 @@ async function addQuestion() {
 }
 
 async function askQuestion(): Promise<void> {
-  const data = await fs.readFile("src/data.json");
-  const parsedData = JSON.parse(data.toString());
+  const data: Buffer = await fs.readFile(FILE_PATH);
+  const parsedData: Data[] = JSON.parse(data.toString());
 
-  const { question, answer } = parsedData[0];
+  const target: Data = parsedData[0];
 
-  const answers = await inquirer.prompt([
-    {
-      type: "input",
-      name: "useranswer",
-      message: question,
-    },
-  ]);
+  const { question, answer } = target;
 
-  if (answers.useranswer === answer) {
-    console.log("That's right!");
+  const prompt: Prompt = {
+    type: "input",
+    name: "useranswer",
+    message: question,
+  };
+
+  const answers: Answers = await inquirer.prompt([prompt]);
+
+  target.lastAnsweredCorrect = checkAnswer(answers.useranswer, answer);
+  target.lastAsked = Date.now().toString();
+
+  const newData: Data[] = parsedData.filter((item) => item.id !== target.id);
+
+  newData.push(target);
+
+  await fs.writeFile(FILE_PATH, JSON.stringify(newData));
+}
+
+function checkAnswer(input: string, answer: string): boolean {
+  if (input === answer) {
+    console.log("You got it right!");
+    return true;
   } else {
-    console.log("Not this time");
+    console.log("You got it wrong!");
+    return false;
   }
 }
